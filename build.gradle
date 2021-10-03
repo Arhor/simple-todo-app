@@ -1,0 +1,8 @@
+wrapper {
+    gradleVersion "${gradleWrapperVersion}"
+}
+
+task stage {
+    dependsOn   ':todo-client:build'
+    finalizedBy ':todo-server:build'
+}

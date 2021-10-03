@@ -1,0 +1,30 @@
+import com.github.gradle.node.npm.task.NpmTask
+
+plugins {
+    id 'com.github.node-gradle.node'
+    id 'idea'
+}
+
+node {
+    version = '14.18.0'
+    download = true
+}
+
+idea {
+    module {
+        excludeDirs.add file("$projectDir/node_modules")
+        excludeDirs.add file("$projectDir/dist")
+    }
+}
+
+task test(type: NpmTask) {
+    dependsOn npmInstall
+    group = 'verification'
+    args = ['run', 'test']
+}
+
+task build(type: NpmTask) {
+    dependsOn test
+    group = 'build'
+    args = ['run', 'build']
+}

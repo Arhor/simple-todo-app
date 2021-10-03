@@ -1,0 +1,28 @@
+{
+  "name": "todo-client",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "format": "prettier --write \"+(src|tests|.storybook)/**/*.+(js|jsx|json|css|md|html)\""
+  },
+  "dependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^1.0.1",
+    "prettier": "^2.4.1",
+    "vite": "^2.6.2"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "arrowParens": "always",
+    "endOfLine": "crlf",
+    "semi": true,
+    "tabWidth": 4,
+    "trailingComma": "all"
+  }
+}

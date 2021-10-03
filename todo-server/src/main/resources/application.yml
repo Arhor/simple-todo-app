@@ -55,3 +55,11 @@ spring:
     password: ${spring.datasource.password}
     enabled: true
     baseline-on-migrate: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${GITHUB_CLIENT_ID}
+            clientSecret: ${GITHUB_CLIENT_SECRET}

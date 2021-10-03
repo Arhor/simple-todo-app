@@ -11,10 +11,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
         http.authorizeRequests()
             .anyRequest()
-            .permitAll();
-        // @formatter:on
+            .permitAll()
+            .and()
+            .oauth2Login();
     }
 }

@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: file:../.env[.properties]
+
   datasource:
     url: jdbc:postgresql://localhost:5432/simple_todo_app_db
     username: postgres

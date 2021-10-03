@@ -17,14 +17,14 @@ public class DisplayAppInfo implements StartupTask {
 
     private static final String DEFAULT_HOST = "localhost";
     private static final String APP_INFO_TEMPLATE = """
-            
-            --------------------------------------------------------------------------------
-             Application `{}` is running! Access URLs:
-             - Local:     {}://{}:{}{}
-             - External:  {}://{}:{}{}
-             - java ver.: {}
-            --------------------------------------------------------------------------------
-            """;
+                    
+        --------------------------------------------------------------------------------
+         Application `{}` is running! Access URLs:
+         - Local:     {}://{}:{}{}
+         - External:  {}://{}:{}{}
+         - java ver.: {}
+        --------------------------------------------------------------------------------
+        """;
 
     private final Environment env;
 
@@ -47,16 +47,16 @@ public class DisplayAppInfo implements StartupTask {
         var javaVersion = getJavaVersion();
 
         return new Object[]{
-                appName,
-                protocol,
-                DEFAULT_HOST,
-                serverPort,
-                contextPath,
-                protocol,
-                hostAddress,
-                serverPort,
-                contextPath,
-                javaVersion
+            appName,
+            protocol,
+            DEFAULT_HOST,
+            serverPort,
+            contextPath,
+            protocol,
+            hostAddress,
+            serverPort,
+            contextPath,
+            javaVersion
         };
     }
 

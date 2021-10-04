@@ -1,3 +1,5 @@
+apply from: "${rootDir}/scripts/environment.gradle"
+
 wrapper {
     gradleVersion "${gradleWrapperVersion}"
 }

@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath ("io.github.cdimascio:java-dotenv:${javaDotenvVersion}")
+    }
+}
+
+def environmentVariables = new HashMap<String, String>(System.getenv())
+
+io.github.cdimascio.dotenv.Dotenv.configure()
+        .directory("${rootDir}")
+        .ignoreIfMalformed()
+        .ignoreIfMissing()
+        .load()
+        .entries()
+        .forEach { environmentVariables.put(it.key, it.value) }
+
+ext {
+    environmentVariable = { String name ->
+        def variable = environmentVariables.get(name)
+        if (variable != null) {
+            return variable
+        }
+        throw IllegalStateException("Missing Environment Variable: ${name}")
+    }
+}

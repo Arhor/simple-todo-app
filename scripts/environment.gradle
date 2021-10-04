@@ -1,3 +1,5 @@
+import io.github.cdimascio.dotenv.Dotenv
+
 buildscript {
     repositories {
         mavenCentral()
@@ -8,14 +10,9 @@ buildscript {
 }
 
 def environmentVariables = new HashMap<String, String>(System.getenv())
+def dotenv = Dotenv.configure().directory("${rootDir}").ignoreIfMissing().load()
 
-io.github.cdimascio.dotenv.Dotenv.configure()
-        .directory("${rootDir}")
-        .ignoreIfMalformed()
-        .ignoreIfMissing()
-        .load()
-        .entries()
-        .forEach { environmentVariables.put(it.key, it.value) }
+dotenv.entries().forEach { environmentVariables.put(it.key, it.value) }
 
 ext {
     environmentVariable = { String name ->
@@ -23,6 +20,6 @@ ext {
         if (variable != null) {
             return variable
         }
-        throw IllegalStateException("Missing Environment Variable: ${name}")
+        throw new IllegalStateException("Missing Environment Variable: ${name}")
     }
 }

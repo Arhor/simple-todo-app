@@ -55,6 +55,7 @@ spring:
     password: ${spring.datasource.password}
     enabled: true
     baseline-on-migrate: true
+    baseline-version: 0.0
 
   security:
     oauth2:

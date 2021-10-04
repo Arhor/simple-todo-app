@@ -35,18 +35,18 @@ configurations {
 }
 
 dependencies {
+    annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor 'org.springframework:spring-context-indexer'
-    annotationProcessor 'org.projectlombok:lombok'
+
+    compileOnly 'org.projectlombok:lombok'
+    compileOnly "org.mapstruct:mapstruct:${mapstructVersion}"
+
+    runtimeOnly 'org.postgresql:postgresql'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.postgresql:postgresql'
-
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation 'org.flywaydb:flyway-core'
-
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -54,21 +54,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.security:spring-security-test"
-    testImplementation "org.testcontainers:junit-jupiter"
-    testImplementation "org.testcontainers:postgresql"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
 }
 
-flyway {
-    url = environmentVariable("JDBC_DATABASE_URL")
-    user = environmentVariable("JDBC_DATABASE_USERNAME")
-    password = environmentVariable("JDBC_DATABASE_PASSWORD")
-
-    driver = 'org.postgresql.Driver'
-    encoding = 'UTF-8'
-    locations = ['classpath:db/migration']
-}
 
 task copyLatestClientBuild(type: Copy) {
     def clientPrjDir = project(':todo-client').projectDir.toString()
@@ -76,6 +67,18 @@ task copyLatestClientBuild(type: Copy) {
 
     from(Paths.get(clientPrjDir, 'dist'))
     into(Paths.get(serverBldDir, 'resources', 'main', 'static'))
+}
+
+flyway {
+    url = environmentVariable('JDBC_DATABASE_URL')
+    user = environmentVariable('JDBC_DATABASE_USERNAME')
+    password = environmentVariable('JDBC_DATABASE_PASSWORD')
+
+    driver = 'org.postgresql.Driver'
+    encoding = 'UTF-8'
+    locations = ['classpath:db/migration']
+    baselineVersion = '0.0'
+    baselineOnMigrate = true
 }
 
 processResources {
@@ -88,7 +91,7 @@ tasks.withType(Test) {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs.addAll([
-            "-Xlint:unchecked",
-            "-Xlint:deprecation",
+            '-Xlint:unchecked',
+            '-Xlint:deprecation',
     ])
 }

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 import dev.arhor.simple.todo.task.StartupTask;
 
-@SpringBootApplication
+@SpringBootApplication(proxyBeanMethods = false)
 public class ToDoAppRunner {
 
     public static void main(String[] args) {

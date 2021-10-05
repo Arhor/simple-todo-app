@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import dev.arhor.simple.todo.data.model.ToDoItem;
 import dev.arhor.simple.todo.data.repository.ToDoItemRepository;
+import dev.arhor.simple.todo.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,50 +26,27 @@ public class ToDoItemServiceImpl implements ToDoItemService {
 
     @Override
     public ToDoItemDto createToDoItem(ToDoItemDto item, String owner) {
-        var toDoItem = converter.convertDtoToEntity(item);
-        toDoItem.setOwner(owner);
+        var toDoItem = converter.convertDtoToEntity(item, owner);
         var savedToDoItem = repository.save(toDoItem);
         return converter.convertEntityToDto(savedToDoItem);
     }
 
     @Override
-    public List<ToDoItemDto> createToDoItems(List<ToDoItemDto> items, String owner) {
-        if (items.isEmpty()) {
-            return items;
-        }
-        var toDoItems = converter.batchConvertDtoToEntity(items);
-        for (ToDoItem toDoItem : toDoItems) {
-            toDoItem.setOwner(owner);
-        }
-        var savedToDoItems = repository.saveAll(toDoItems);
-        return converter.batchConvertEntityToDto(savedToDoItems);
+    public ToDoItemDto updateToDoItem(ToDoItemDto item, String owner) {
+        var toDoItem = getToDoItemEnsureOwnerHasAccess(item.id(), owner);
+        var savedToDoItem = repository.save(toDoItem);
+        return converter.convertEntityToDto(savedToDoItem);
     }
 
     @Override
-    public void removeToDoItemById(Long id, String owner) {
-        validate(id, owner);
-        repository.deleteById(id);
+    public void deleteToDoItemById(Long id, String owner) {
+        var toDoItem = getToDoItemEnsureOwnerHasAccess(id, owner);
+        repository.delete(toDoItem);
     }
 
-    @Override
-    public void removeToDoItemsByIds(List<Long> ids, String owner) {
-        for (Long id : ids) {
-            validate(id, owner);
-        }
-        repository.deleteAllById(ids);
-    }
-
-    private void validate(Long id, String owner) {
-        var toDoItem = repository.findById(id).orElseThrow(EntityNotFoundException::new);
-
-        if (!toDoItem.getOwner().equals(owner)) {
-            throw new IllegalAccessAttemptException();
-        }
-    }
-
-    public static class EntityNotFoundException extends RuntimeException {
-    }
-
-    public static class IllegalAccessAttemptException extends RuntimeException {
+    private ToDoItem getToDoItemEnsureOwnerHasAccess(Long id, String owner) {
+        return repository.findById(id)
+            .filter(toDoItem -> !toDoItem.getOwner().equals(owner))
+            .orElseThrow(() -> new EntityNotFoundException("ToDoItem", "id", id));
     }
 }

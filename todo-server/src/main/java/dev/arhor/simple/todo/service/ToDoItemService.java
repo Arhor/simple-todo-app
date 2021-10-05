@@ -8,9 +8,7 @@ public interface ToDoItemService {
 
     ToDoItemDto createToDoItem(ToDoItemDto item, String owner);
 
-    List<ToDoItemDto> createToDoItems(List<ToDoItemDto> items, String owner);
+    ToDoItemDto updateToDoItem(ToDoItemDto item, String owner);
 
-    void removeToDoItemById(Long id, String owner);
-
-    void removeToDoItemsByIds(List<Long> ids, String owner);
+    void deleteToDoItemById(Long id, String owner);
 }

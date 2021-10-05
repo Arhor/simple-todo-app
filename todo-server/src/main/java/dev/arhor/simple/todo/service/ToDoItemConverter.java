@@ -1,5 +1,7 @@
 package dev.arhor.simple.todo.service;
 
+import java.util.List;
+
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -7,15 +9,15 @@ import org.mapstruct.Mapping;
 import dev.arhor.simple.todo.data.model.ToDoItem;
 
 @Mapper(componentModel = "spring")
-public interface ToDoItemConverter extends Converter<ToDoItem, ToDoItemDto> {
+public interface ToDoItemConverter {
 
-    @Override
-    @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "owner", source = "owner")
     @Mapping(target = "dateTimeCreated", ignore = true)
     @Mapping(target = "dateTimeUpdated", ignore = true)
-    ToDoItem convertDtoToEntity(ToDoItemDto item);
+    ToDoItem convertDtoToEntity(ToDoItemDto item, String owner);
 
-    @Override
     @InheritInverseConfiguration(name = "convertDtoToEntity")
     ToDoItemDto convertEntityToDto(ToDoItem item);
+
+    List<ToDoItemDto> batchConvertEntityToDto(List<ToDoItem> items);
 }

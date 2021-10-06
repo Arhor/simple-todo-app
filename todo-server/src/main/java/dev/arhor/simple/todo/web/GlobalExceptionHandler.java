@@ -18,6 +18,9 @@ import dev.arhor.simple.todo.exception.LocalizedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @see org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
+ */
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -30,16 +33,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public Map<String, Object> handleDefault(Exception exception, Locale locale, TimeZone timeZone) {
         log.error(exception.getMessage(), exception);
 
-        final var message = (exception instanceof LocalizedException localizedException)
-            ? messages.getMessage(localizedException.getLabel(), localizedException.getParams(), locale)
-            : exception.getMessage();
-
-        final var timestamp = Instant.now(Clock.system(
-            (timeZone != null)
-                ? timeZone.toZoneId()
-                : ZoneId.systemDefault()));
+        final var message = getMessage(exception, locale);
+        final var timestamp = getTimestamp(timeZone);
 
         return Map.of("message", message, "timestamp", timestamp);
     }
 
+    private String getMessage(Exception exception, Locale locale) {
+        if (exception instanceof LocalizedException localizedException) {
+            final var label = localizedException.getLabel();
+            final var params = localizedException.getParams();
+            return messages.getMessage(label, params, locale);
+        }
+        return exception.getMessage();
+    }
+
+    private Instant getTimestamp(TimeZone timeZone) {
+        final var zoneId = (timeZone != null) ? timeZone.toZoneId() : ZoneId.systemDefault();
+        final var clock = Clock.system(zoneId);
+        return Instant.now(clock);
+    }
 }

@@ -3,15 +3,18 @@ package dev.arhor.simple.todo.task;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import dev.arhor.simple.todo.SpringProfile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@Profile(SpringProfile.DEVELOPMENT)
 @RequiredArgsConstructor
 public class DisplayAppInfo implements StartupTask {
 
@@ -19,7 +22,7 @@ public class DisplayAppInfo implements StartupTask {
     private static final String APP_INFO_TEMPLATE = """
                     
         --------------------------------------------------------------------------------
-         Application `{}` is running! Access URLs:
+         Application `{}` is running in dev-mode! Access URLs:
          - Local:     {}://{}:{}{}
          - External:  {}://{}:{}{}
          - java ver.: {}

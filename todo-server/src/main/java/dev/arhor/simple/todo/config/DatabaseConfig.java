@@ -1,6 +1,5 @@
 package dev.arhor.simple.todo.config;
 
-import java.time.Clock;
 import java.util.Optional;
 
 import org.springframework.context.annotation.Bean;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import dev.arhor.simple.todo.SpringProfile;
 import dev.arhor.simple.todo.data.model.DomainObject;
+import dev.arhor.simple.todo.service.TimeService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,11 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @EnableTransactionManagement
 public class DatabaseConfig {
 
-    public static final String DATE_TIME_PROVIDER_BEAN = "UTCInstantDateTimeProvider";
+    public static final String DATE_TIME_PROVIDER_BEAN = "InstantDateTimeProviderUTC";
 
     @Bean(DATE_TIME_PROVIDER_BEAN)
-    public DateTimeProvider dateTimeProvider() {
-        return () -> Optional.of(Clock.systemUTC().instant());
+    public DateTimeProvider dateTimeProvider(TimeService timeService) {
+        return () -> Optional.of(timeService.now());
     }
 
     @Bean

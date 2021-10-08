@@ -43,7 +43,7 @@ public class ToDoItemController {
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ToDoItemDto updateToDoItem(ToDoItemDto toDoItem, Authentication auth) {
         var owner = ownerResolver.resolveOwnerId(auth);
-        return service.createToDoItem(toDoItem, owner);
+        return service.updateToDoItem(toDoItem, owner);
     }
 
     @DeleteMapping("/{id}")

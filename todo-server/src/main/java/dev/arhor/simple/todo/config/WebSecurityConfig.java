@@ -17,6 +17,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest()
             .permitAll()
             .and()
-            .oauth2Login();
+            .oauth2Login()
+            .and()
+            .headers()
+            .xssProtection()
+            .and()
+            .contentSecurityPolicy("script-src 'self'");
     }
 }

@@ -1,1 +1,2 @@
-export { default } from '@/components/ToDoItem/ToDoItem.jsx';
+export { default } from '@/components/ToDoItemList/ToDoItemList.jsx';
+export * from '@/components/ToDoItemList/ToDoItemList.jsx';

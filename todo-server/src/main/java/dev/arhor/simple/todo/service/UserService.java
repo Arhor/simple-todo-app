@@ -13,11 +13,19 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
+
+    public UserService() {
+        this(new DefaultOAuth2UserService());
+    }
+
+    public UserService(final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate) {
+        this.delegate = delegate;
+    }
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        final var user = delegate.loadUser(userRequest);
+    public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        var user = delegate.loadUser(userRequest);
         log.debug("OAuth2User user loaded: {}", user);
         return user;
     }

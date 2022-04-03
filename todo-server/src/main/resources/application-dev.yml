@@ -4,6 +4,17 @@ spring:
       - optional:file:.env[.properties]    # to run app by main class or jar from the IDE
       - optional:file:../.env[.properties] # to run app by gradle task bootRun
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "*"
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
-    org.springframework.jdbc.core.JdbcTemplate: debug
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    dev.arhor.simple.todo: DEBUG

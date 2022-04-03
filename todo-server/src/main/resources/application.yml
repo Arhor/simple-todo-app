@@ -19,7 +19,7 @@ server:
 
 spring:
   application:
-    name: todo-server
+    name: simple-todo-app-server
 
   aop:
     proxy-target-class: false
@@ -29,9 +29,6 @@ spring:
 
   jmx:
     enabled: false
-
-  messages:
-    basename: messages
 
   output:
     ansi:

@@ -11,4 +11,6 @@ public interface ToDoItemService {
     ToDoItemDto updateToDoItem(ToDoItemDto item, String owner);
 
     void deleteToDoItemById(Long id, String owner);
+
+    void deleteOverdueToDoItems();
 }

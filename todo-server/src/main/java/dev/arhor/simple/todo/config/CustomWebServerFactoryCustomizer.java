@@ -5,7 +5,6 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.stereotype.Component;
 
 import io.undertow.server.DefaultByteBufferPool;
-import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 
 @Component
@@ -16,13 +15,12 @@ public class CustomWebServerFactoryCustomizer implements WebServerFactoryCustomi
     private static final String WEB_SOCKET_DEPLOYMENT_INFO = "io.undertow.websockets.jsr.WebSocketDeploymentInfo";
 
     @Override
-    public void customize(UndertowServletWebServerFactory factory) {
-        factory.addDeploymentInfoCustomizers(this::customizeByteBuffer);
-    }
+    public void customize(final UndertowServletWebServerFactory factory) {
+        factory.addDeploymentInfoCustomizers(deploymentInfo -> {
+            var byteBufferPool = new DefaultByteBufferPool(IS_DIRECT_BUFFER, BYTE_BUFFER_SIZE);
+            var webSocketDeploymentInfo = new WebSocketDeploymentInfo().setBuffers(byteBufferPool);
 
-    private void customizeByteBuffer(DeploymentInfo deploymentInfo) {
-        var byteBufferPool = new DefaultByteBufferPool(IS_DIRECT_BUFFER, BYTE_BUFFER_SIZE);
-        var webSocketDeploymentInfo = new WebSocketDeploymentInfo().setBuffers(byteBufferPool);
-        deploymentInfo.addServletContextAttribute(WEB_SOCKET_DEPLOYMENT_INFO, webSocketDeploymentInfo);
+            deploymentInfo.addServletContextAttribute(WEB_SOCKET_DEPLOYMENT_INFO, webSocketDeploymentInfo);
+        });
     }
 }

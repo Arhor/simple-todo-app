@@ -18,35 +18,36 @@ public record ToDoItemDto(
         return new CopyBuilder(id, name, dueDate, complete);
     }
 
-    public static class CopyBuilder {
+    public static final class CopyBuilder {
+
         private Long id;
         private String name;
         private Instant dueDate;
         private Boolean complete;
 
-        private CopyBuilder(Long id, String name, Instant dueDate, Boolean complete) {
+        private CopyBuilder(final Long id, final String name, final Instant dueDate, final Boolean complete) {
             this.id = id;
             this.name = name;
             this.dueDate = dueDate;
             this.complete = complete;
         }
 
-        public CopyBuilder id(Long id) {
+        public CopyBuilder id(final Long id) {
             this.id = id;
             return this;
         }
 
-        public CopyBuilder name(String name) {
+        public CopyBuilder name(final String name) {
             this.name = name;
             return this;
         }
 
-        public CopyBuilder dueDate(Instant dueDate) {
+        public CopyBuilder dueDate(final Instant dueDate) {
             this.dueDate = dueDate;
             return this;
         }
 
-        public CopyBuilder complete(Boolean complete) {
+        public CopyBuilder complete(final Boolean complete) {
             this.complete = complete;
             return this;
         }

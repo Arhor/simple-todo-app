@@ -1,37 +1,10 @@
 package dev.arhor.simple.todo.exception;
 
-public class EntityNotFoundException extends LocalizedException {
+import static dev.arhor.simple.todo.i18n.error.ErrorLabel.ERROR_ENTITY_NOT_FOUND;
 
-    private final String entityName;
-    private final String propertyName;
-    private final Object propertyValue;
+public final class EntityNotFoundException extends PropertyConditionException {
 
-    public EntityNotFoundException(String entityName, String propertyName, Object propertyValue) {
-        super("Cannot found entity [%s] with [%s] = [%s]".formatted(entityName, propertyName, propertyValue));
-        this.entityName = entityName;
-        this.propertyName = propertyName;
-        this.propertyValue = propertyValue;
-    }
-
-    public String getEntityName() {
-        return entityName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public Object getPropertyValue() {
-        return propertyValue;
-    }
-
-    @Override
-    public String getLabel() {
-        return "error.entity.notfound";
-    }
-
-    @Override
-    public Object[] getParams() {
-        return new Object[]{entityName, propertyName, propertyValue};
+    public EntityNotFoundException(final String name, final String condition) {
+        super(ERROR_ENTITY_NOT_FOUND, name, condition);
     }
 }

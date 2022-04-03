@@ -1,9 +1,11 @@
+// @formatter:off
 pluginManagement {
     plugins {
-        id 'org.flywaydb.flyway'             version "${flywayPluginVersion}"
-        id 'org.springframework.boot'        version "${springBootVersion}"
-        id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-        id 'com.github.node-gradle.node'     version "${nodeGradlePluginVersion}"
+        id 'org.flywaydb.flyway'             version settings['version.flyway']
+        id 'org.springframework.boot'        version settings['version.springBoot']
+        id 'io.spring.dependency-management' version settings['version.springDependencyManagement']
+        id 'com.github.node-gradle.node'     version settings['version.nodeGradlePlugin']
+        id 'io.freefair.lombok'              version settings['version.lombok']
     }
 }
 
@@ -11,3 +13,18 @@ rootProject.name = 'simple-todo-app'
 
 include ':todo-client'
 include ':todo-server'
+
+enableFeaturePreview 'VERSION_CATALOGS'
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            // dependency version should be declared in 'gradle.properties' with 'version.' prefix
+            this.properties
+                .findAll { it.key.startsWith 'version.' }
+                .collectEntries { [it.key - 'version.', it.value] }
+                .each { version (it.key, it.value) }
+        }
+    }
+}
+// @formatter:on

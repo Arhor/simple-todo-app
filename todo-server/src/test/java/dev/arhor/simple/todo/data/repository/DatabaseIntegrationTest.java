@@ -12,11 +12,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import dev.arhor.simple.todo.config.DatabaseConfig;
+import dev.arhor.simple.todo.service.TimeServiceImpl;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = NONE)
 @Testcontainers(disabledWithoutDocker = true)
-@ContextConfiguration(classes = {DatabaseConfig.class})
+@ContextConfiguration(classes = {DatabaseConfig.class, TimeServiceImpl.class})
 abstract class DatabaseIntegrationTest {
 
     @Container

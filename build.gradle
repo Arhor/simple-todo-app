@@ -1,10 +1,34 @@
-apply from: "${rootDir}/scripts/environment.gradle"
+import io.github.cdimascio.dotenv.Dotenv
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath ("io.github.cdimascio:java-dotenv:${property('version.javaDotenv')}")
+    }
+}
 
 wrapper {
-    gradleVersion "${gradleWrapperVersion}"
+    gradleVersion libs.versions.gradle.get()
 }
 
 task stage {
     dependsOn   ':todo-client:build'
     finalizedBy ':todo-server:build'
+}
+
+def environmentVariables = new HashMap<String, String>(System.getenv())
+def dotenv = Dotenv.configure().directory("${rootDir}").ignoreIfMissing().load()
+
+dotenv.entries().forEach { (environmentVariables[it.key] = it.value) }
+
+ext {
+    env = { String name -> environmentVariables.get(name)
+        def variable = environmentVariables.get(name)
+        if (variable != null) {
+            return variable
+        }
+        throw new IllegalStateException("Missing Environment Variable: ${name}")
+    }
 }

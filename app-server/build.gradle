@@ -67,8 +67,8 @@ dependencies {
 
 
 task copyLatestClientBuild(type: Copy) {
-    def clientPrjDir = project(":todo-client").projectDir.toString()
-    def serverBldDir = project(":todo-server").buildDir.toString()
+    def clientPrjDir = project(":app-client").projectDir.toString()
+    def serverBldDir = project(":app-server").buildDir.toString()
 
     from(Paths.get(clientPrjDir, "dist"))
     into(Paths.get(serverBldDir, "resources", "main", "static"))

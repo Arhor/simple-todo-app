@@ -11,8 +11,8 @@ pluginManagement {
 
 rootProject.name = 'simple-todo-app'
 
-include ':todo-client'
-include ':todo-server'
+include ':app-client'
+include ':app-server'
 
 enableFeaturePreview 'VERSION_CATALOGS'
 

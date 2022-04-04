@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import dev.arhor.simple.todo.service.impl.DelegatingOAuth2UserServiceImpl;
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -20,7 +22,7 @@ class UserServiceTest {
     @Mock private OAuth2UserRequest userRequest;
 
     @InjectMocks
-    private UserService userService;
+    private DelegatingOAuth2UserServiceImpl userService;
 
     @Test
     void setDelegate() {

@@ -2,6 +2,8 @@ package dev.arhor.simple.todo.service;
 
 import java.util.List;
 
+import dev.arhor.simple.todo.service.dto.ToDoItemDto;
+
 public interface ToDoItemService {
 
     List<ToDoItemDto> getToDoItemsByOwner(String owner);

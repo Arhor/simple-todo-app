@@ -12,10 +12,15 @@ import org.springframework.web.context.WebApplicationContext;
 @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = INTERFACES)
 public class CurrentRequestContextImpl implements CurrentRequestContext {
 
-    private final UUID requestId = UUID.randomUUID();
+    private UUID requestId = UUID.randomUUID();
 
     @Override
     public UUID getRequestId() {
         return requestId;
+    }
+
+    @Override
+    public void setRequestId(final UUID requestId) {
+        this.requestId = requestId;
     }
 }

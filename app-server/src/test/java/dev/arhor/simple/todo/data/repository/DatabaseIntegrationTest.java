@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import dev.arhor.simple.todo.config.DatabaseConfig;
-import dev.arhor.simple.todo.service.TimeServiceImpl;
+import dev.arhor.simple.todo.service.impl.TimeServiceImpl;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = NONE)

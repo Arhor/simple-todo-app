@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.service;
+package dev.arhor.simple.todo.service.dto;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 

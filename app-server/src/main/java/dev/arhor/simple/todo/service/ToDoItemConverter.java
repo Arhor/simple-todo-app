@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import dev.arhor.simple.todo.data.model.ToDoItem;
+import dev.arhor.simple.todo.service.dto.ToDoItemDto;
 
 @Mapper(componentModel = "spring")
 public interface ToDoItemConverter {

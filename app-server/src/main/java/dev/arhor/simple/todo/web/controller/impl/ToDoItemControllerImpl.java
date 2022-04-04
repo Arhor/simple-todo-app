@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.arhor.simple.todo.service.ToDoItemDto;
+import dev.arhor.simple.todo.service.dto.ToDoItemDto;
 import dev.arhor.simple.todo.service.ToDoItemService;
 import dev.arhor.simple.todo.web.controller.ToDoItemController;
 import dev.arhor.simple.todo.web.security.OwnerResolver;

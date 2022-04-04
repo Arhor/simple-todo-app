@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.service;
+package dev.arhor.simple.todo.service.impl;
 
 import static dev.arhor.simple.todo.common.TimeUtils.DAYS_IN_WEEK;
 import static dev.arhor.simple.todo.common.TimeUtils.DEFAULT_ZONE_ID;
@@ -13,6 +13,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.TimeZone;
 
 import org.springframework.stereotype.Service;
+
+import dev.arhor.simple.todo.service.TimeService;
 
 @Service
 public class TimeServiceImpl implements TimeService {

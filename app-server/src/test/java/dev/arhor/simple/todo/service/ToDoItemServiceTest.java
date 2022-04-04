@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import dev.arhor.simple.todo.data.repository.ToDoItemRepository;
+import dev.arhor.simple.todo.service.impl.ToDoItemServiceImpl;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ToDoItemServiceImpl.class})

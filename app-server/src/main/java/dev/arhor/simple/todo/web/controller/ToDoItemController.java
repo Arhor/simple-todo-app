@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import dev.arhor.simple.todo.service.ToDoItemDto;
+import dev.arhor.simple.todo.service.dto.ToDoItemDto;
 
 @RequestMapping("/todos")
 public interface ToDoItemController {

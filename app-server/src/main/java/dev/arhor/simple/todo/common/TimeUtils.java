@@ -17,6 +17,7 @@ public final class TimeUtils {
     public static final int HOUR = MINUTE * MINUTES_IN_HOUR;
     public static final int DAY = HOUR * HOURS_IN_DAY;
     public static final int WEEK = DAY * DAYS_IN_WEEK;
+
     public static final ZoneId DEFAULT_ZONE_ID = ZoneOffset.UTC;
     public static final ChronoUnit TIME_MEASUREMENT_ACCURACY = ChronoUnit.MILLIS;
 

@@ -10,14 +10,25 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import dev.arhor.simple.todo.service.event.UserLoadedEvent;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DelegatingOAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    public DelegatingOAuth2UserServiceImpl(final ApplicationEventPublisher applicationEventPublisher) {
+        this(new DefaultOAuth2UserService(), applicationEventPublisher);
+    }
+
+    public DelegatingOAuth2UserServiceImpl(
+        final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate,
+        final ApplicationEventPublisher applicationEventPublisher
+    ) {
+        this.delegate = delegate;
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Override
     public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

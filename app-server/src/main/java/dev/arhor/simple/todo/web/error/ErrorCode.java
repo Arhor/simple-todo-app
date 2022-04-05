@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.exception;
+package dev.arhor.simple.todo.web.error;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -16,7 +16,7 @@ public enum ErrorCode {
     DUPLICATE                (Type.DAT, 2),
 
     HANDLER_NOT_FOUND        (Type.SRV, 0),
-    METHOD_ARG_TYPE_MISMATCH (Type.SRV, 1)
+    METHOD_ARG_TYPE_MISMATCH (Type.SRV, 1),
     // @formatter:on
     ;
 

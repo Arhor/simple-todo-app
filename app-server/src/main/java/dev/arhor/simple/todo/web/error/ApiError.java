@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import dev.arhor.simple.todo.exception.ErrorCode;
-
 @JsonPropertyOrder({
     "code",
     "message",

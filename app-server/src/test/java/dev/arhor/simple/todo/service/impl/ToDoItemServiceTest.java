@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.service;
+package dev.arhor.simple.todo.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,6 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import dev.arhor.simple.todo.data.repository.ToDoItemRepository;
+import dev.arhor.simple.todo.service.StringSanitizer;
+import dev.arhor.simple.todo.service.TimeService;
+import dev.arhor.simple.todo.service.ToDoItemConverter;
+import dev.arhor.simple.todo.service.ToDoItemService;
 import dev.arhor.simple.todo.service.impl.ToDoItemServiceImpl;
 
 @ExtendWith(SpringExtension.class)

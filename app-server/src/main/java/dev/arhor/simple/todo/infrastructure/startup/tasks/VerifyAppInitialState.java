@@ -13,7 +13,6 @@ import dev.arhor.simple.todo.infrastructure.startup.Verifier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// ApplicationEventPublisher <--- Try to use!!!
 @Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)

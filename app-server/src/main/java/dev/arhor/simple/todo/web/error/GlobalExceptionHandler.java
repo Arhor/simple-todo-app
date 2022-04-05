@@ -25,7 +25,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import dev.arhor.simple.todo.infrastructure.context.CurrentRequestContext;
 import dev.arhor.simple.todo.exception.EntityDuplicateException;
 import dev.arhor.simple.todo.exception.EntityNotFoundException;
-import dev.arhor.simple.todo.exception.ErrorCode;
 import dev.arhor.simple.todo.i18n.error.ErrorLabel;
 import dev.arhor.simple.todo.i18n.error.LocalizedException;
 import dev.arhor.simple.todo.service.TimeService;

@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ToDoItemServiceImpl implements ToDoItemService {
 
@@ -38,7 +37,8 @@ public class ToDoItemServiceImpl implements ToDoItemService {
     }
 
     @Override
-    public ToDoItemDto createToDoItem(ToDoItemDto item, String owner) {
+    @Transactional
+    public ToDoItemDto createToDoItem(final ToDoItemDto item, final String owner) {
         var sanitizedItem = sanitize(item);
         var toDoItem = toDoItemConverter.convertDtoToEntity(sanitizedItem, owner);
         var savedToDoItem = toDoItemRepository.save(toDoItem);
@@ -46,7 +46,8 @@ public class ToDoItemServiceImpl implements ToDoItemService {
     }
 
     @Override
-    public ToDoItemDto updateToDoItem(ToDoItemDto item, String owner) {
+    @Transactional
+    public ToDoItemDto updateToDoItem(final ToDoItemDto item, final String owner) {
         var toDoItem = getToDoItemEnsureOwnerHasAccess(item.id(), owner);
         var sanitizedItem = sanitize(item);
 
@@ -59,12 +60,14 @@ public class ToDoItemServiceImpl implements ToDoItemService {
     }
 
     @Override
-    public void deleteToDoItemById(Long id, String owner) {
+    @Transactional
+    public void deleteToDoItemById(final Long id, final String owner) {
         var toDoItem = getToDoItemEnsureOwnerHasAccess(id, owner);
         toDoItemRepository.delete(toDoItem);
     }
 
     @Override
+    @Transactional
     public void deleteOverdueToDoItems() {
         var dateWeekAgo = timeService.weekAgo();
         log.info("Deleting overdue todo items with 'dueDate' before {}", dateWeekAgo);
@@ -72,13 +75,13 @@ public class ToDoItemServiceImpl implements ToDoItemService {
         log.info("Deleted {} todo items", deletedItems);
     }
 
-    private ToDoItem getToDoItemEnsureOwnerHasAccess(Long id, String owner) {
+    private ToDoItem getToDoItemEnsureOwnerHasAccess(final Long id, final String owner) {
         return toDoItemRepository.findById(id)
             .filter(toDoItem -> !toDoItem.getOwner().equals(owner))
             .orElseThrow(() -> new EntityNotFoundException("ToDoItem", "id=" + id));
     }
 
-    private ToDoItemDto sanitize(ToDoItemDto dto) {
+    private ToDoItemDto sanitize(final ToDoItemDto dto) {
         var sanitizedName = sanitizer.sanitize(dto.name());
         return dto.copy().name(sanitizedName).build();
     }

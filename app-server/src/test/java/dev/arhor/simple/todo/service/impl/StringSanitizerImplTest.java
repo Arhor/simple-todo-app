@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.service;
+package dev.arhor.simple.todo.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

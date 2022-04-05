@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.web;
+package dev.arhor.simple.todo.web.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-
-import dev.arhor.simple.todo.web.security.OwnerResolverImpl;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerResolverImplTest {

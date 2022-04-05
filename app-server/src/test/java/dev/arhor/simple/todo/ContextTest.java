@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 @SpringJUnitConfig(ContextTest.EmptyContextConfig.class)
 class ContextTest {
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     static class EmptyContextConfig {
     }
 

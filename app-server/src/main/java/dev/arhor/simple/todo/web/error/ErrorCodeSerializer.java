@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.exception;
+package dev.arhor.simple.todo.web.error;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;

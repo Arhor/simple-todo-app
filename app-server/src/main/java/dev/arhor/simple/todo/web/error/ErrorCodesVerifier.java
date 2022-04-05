@@ -1,4 +1,4 @@
-package dev.arhor.simple.todo.infrastructure.startup;
+package dev.arhor.simple.todo.web.error;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import dev.arhor.simple.todo.common.Result;
-import dev.arhor.simple.todo.exception.ErrorCode;
+import dev.arhor.simple.todo.infrastructure.startup.Verifier;
 
 @Component
 public class ErrorCodesVerifier implements Verifier {

@@ -35,15 +35,9 @@ public class AsyncConfig implements AsyncConfigurer {
     @Bean
     @Override
     public Executor getAsyncExecutor() {
-        var executor = new ContextAwareThreadPoolTaskExecutor(context);
-
-        executor.setCorePoolSize(16);
-        executor.setMaxPoolSize(16);
-        executor.setThreadNamePrefix("asyncThread");
-        executor.setQueueCapacity(15000);
-        executor.initialize();
-
-        return new DelegatingSecurityContextAsyncTaskExecutor(executor);
+        return new DelegatingSecurityContextAsyncTaskExecutor(
+            new ContextAwareThreadPoolTaskExecutor(context)
+        );
     }
 
     @RequiredArgsConstructor

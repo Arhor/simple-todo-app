@@ -16,6 +16,6 @@ public interface ToDoItemRepository extends PagingAndSortingRepository<ToDoItem,
     List<ToDoItem> findAllByOwner(String owner);
 
     @Modifying
-    @Query("DELETE FROM todo_items WHERE due_date < :deadline")
+    @Query("DELETE FROM " + ToDoItem.TABLE + " WHERE " + ToDoItem.COLUMN_DUE_DATE + " < :deadline")
     int deleteToDoItemsByDueDateBefore(Instant deadline);
 }

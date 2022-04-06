@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,11 +23,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import dev.arhor.simple.todo.infrastructure.context.CurrentRequestContext;
 import dev.arhor.simple.todo.exception.EntityDuplicateException;
 import dev.arhor.simple.todo.exception.EntityNotFoundException;
-import dev.arhor.simple.todo.i18n.error.ErrorLabel;
-import dev.arhor.simple.todo.i18n.error.LocalizedException;
+import dev.arhor.simple.todo.infrastructure.context.CurrentRequestContext;
 import dev.arhor.simple.todo.service.TimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,17 +48,7 @@ public class GlobalExceptionHandler {
         final TimeZone timeZone
     ) {
         logExceptionWithRequestId(exception, "Unhandled exception. Consider appropriate exception handler");
-
-        return ApiError.builder()
-            .requestId(currentRequestContext.getRequestId())
-            .timestamp(timeService.now(timeZone))
-            .message(
-                findTranslation(
-                    locale,
-                    ErrorLabel.ERROR_SERVER_INTERNAL
-                )
-            )
-            .build();
+        return handleErrorCode(ErrorCode.UNCATEGORIZED, locale, timeZone);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -70,13 +59,7 @@ public class GlobalExceptionHandler {
         final TimeZone timeZone
     ) {
         logExceptionWithRequestId(exception);
-
-        return ApiError.builder()
-            .requestId(currentRequestContext.getRequestId())
-            .timestamp(timeService.now(timeZone))
-            .message(findTranslationForException(locale, exception))
-            .code(ErrorCode.NOT_FOUND)
-            .build();
+        return handleErrorCode(ErrorCode.NOT_FOUND, locale, timeZone, exception.getParams());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -87,13 +70,7 @@ public class GlobalExceptionHandler {
         final TimeZone timeZone
     ) {
         logExceptionWithRequestId(exception);
-
-        return ApiError.builder()
-            .requestId(currentRequestContext.getRequestId())
-            .timestamp(timeService.now(timeZone))
-            .message(findTranslationForException(locale, exception))
-            .code(ErrorCode.DUPLICATE)
-            .build();
+        return handleErrorCode(ErrorCode.DUPLICATE, locale, timeZone, exception.getParams());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -104,21 +81,14 @@ public class GlobalExceptionHandler {
         final TimeZone timeZone
     ) {
         logExceptionWithRequestId(exception);
-
-        return ApiError.builder()
-            .requestId(currentRequestContext.getRequestId())
-            .timestamp(timeService.now(timeZone))
-            .message(
-                findTranslation(
-                    locale,
-                    ErrorLabel.ERROR_VALUE_TYPE_MISMATCH,
-                    exception.getName(),
-                    exception.getValue(),
-                    exception.getRequiredType()
-                )
-            )
-            .code(ErrorCode.METHOD_ARG_TYPE_MISMATCH)
-            .build();
+        return handleErrorCode(
+            ErrorCode.METHOD_ARG_TYPE_MISMATCH,
+            locale,
+            timeZone,
+            exception.getName(),
+            exception.getValue(),
+            exception.getRequiredType()
+        );
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -129,20 +99,24 @@ public class GlobalExceptionHandler {
         final TimeZone timeZone
     ) {
         logExceptionWithRequestId(exception);
+        return handleErrorCode(
+            ErrorCode.HANDLER_NOT_FOUND,
+            locale,
+            timeZone,
+            exception.getHttpMethod(),
+            exception.getRequestURL()
+        );
+    }
 
-        return ApiError.builder()
-            .requestId(currentRequestContext.getRequestId())
-            .timestamp(timeService.now(timeZone))
-            .message(
-                findTranslation(
-                    locale,
-                    ErrorLabel.ERROR_SERVER_HANDLER_NOT_FOUND,
-                    exception.getHttpMethod(),
-                    exception.getRequestURL()
-                )
-            )
-            .code(ErrorCode.HANDLER_NOT_FOUND)
-            .build();
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ApiError handleAccessDeniedException(
+        final AccessDeniedException exception,
+        final Locale locale,
+        final TimeZone timeZone
+    ) {
+        logExceptionWithRequestId(exception);
+        return handleErrorCode(ErrorCode.UNAUTHORIZED, locale, timeZone);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -155,6 +129,7 @@ public class GlobalExceptionHandler {
         logExceptionWithRequestId(exception);
 
         var bindingResult = exception.getBindingResult();
+
         var errors = ListUtils.union(
             handleObjectErrors(
                 bindingResult.getFieldErrors(),
@@ -168,18 +143,7 @@ public class GlobalExceptionHandler {
             )
         );
 
-        return ApiError.builder()
-            .requestId(currentRequestContext.getRequestId())
-            .timestamp(timeService.now(timeZone))
-            .message(
-                findTranslation(
-                    locale,
-                    ErrorLabel.ERROR_ENTITY_VALIDATION_FAILED
-                )
-            )
-            .code(ErrorCode.VALIDATION_FAILED)
-            .details(errors)
-            .build();
+        return handleErrorCode(ErrorCode.VALIDATION_FAILED, locale, timeZone, errors);
     }
 
     private void logExceptionWithRequestId(final Exception exception) {
@@ -190,20 +154,33 @@ public class GlobalExceptionHandler {
         log.error("{}, Request-ID: {}", message, currentRequestContext.getRequestId(), exception);
     }
 
-    private String findTranslation(final Locale locale, final ErrorLabel label, final Object... params) {
-        return messages.getMessage(
-            label.getCode(),
-            params,
-            locale
-        );
+    private ApiError handleErrorCode(
+        final ErrorCode error,
+        final Locale locale,
+        final TimeZone timeZone,
+        final Object... args
+    ) {
+        return handleErrorCode(error, locale, timeZone, null, args);
     }
 
-    private String findTranslationForException(final Locale locale, final LocalizedException exception) {
-        return findTranslation(
-            locale,
-            exception.getLabel(),
-            exception.getParams()
-        );
+    private ApiError handleErrorCode(
+        final ErrorCode error,
+        final Locale locale,
+        final TimeZone timeZone,
+        final List<String> details,
+        final Object... args
+    ) {
+        var requestId = currentRequestContext.getRequestId();
+        var timestamp = timeService.now(timeZone);
+        var message = messages.getMessage(error.getLabel(), args, locale);
+
+        return ApiError.builder()
+            .requestId(requestId)
+            .timestamp(timestamp)
+            .message(message)
+            .code(error)
+            .details(details)
+            .build();
     }
 
     private <T extends ObjectError> List<String> handleObjectErrors(

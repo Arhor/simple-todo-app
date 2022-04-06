@@ -3,7 +3,7 @@ server:
 
   error:
     whitelabel:
-      enabled: false
+      enabled: true
 
   compression:
     enabled: true
@@ -20,6 +20,9 @@ server:
 spring:
   application:
     name: simple-todo-app-server
+
+  web:
+    locale: en
 
   aop:
     proxy-target-class: false

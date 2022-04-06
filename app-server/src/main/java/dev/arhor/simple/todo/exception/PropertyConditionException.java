@@ -1,15 +1,11 @@
 package dev.arhor.simple.todo.exception;
 
-import dev.arhor.simple.todo.i18n.error.ErrorLabel;
-import dev.arhor.simple.todo.i18n.error.LocalizedException;
-
-public abstract class PropertyConditionException extends LocalizedException {
+public abstract class PropertyConditionException extends RuntimeException {
 
     private final String name;
     private final String condition;
 
-    protected PropertyConditionException(final ErrorLabel label, final String name, final String condition) {
-        super(label);
+    protected PropertyConditionException(final String name, final String condition) {
         this.name = name;
         this.condition = condition;
     }
@@ -22,7 +18,6 @@ public abstract class PropertyConditionException extends LocalizedException {
         return condition;
     }
 
-    @Override
     public Object[] getParams() {
         return new Object[]{name, condition};
     }

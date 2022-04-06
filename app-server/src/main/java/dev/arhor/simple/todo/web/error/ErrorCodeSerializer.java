@@ -36,7 +36,7 @@ public class ErrorCodeSerializer extends StdSerializer<ErrorCode> {
         var numberAsString = String.valueOf(value.getNumericValue());
 
         if (numberAsString.length() > NUM_CODE_MAX_LENGTH) {
-            log.debug("ErrorCode {} numeric value is too large", value);
+            log.debug("ErrorCode_Deprecated {} numeric value is too large", value);
         }
         return StringUtils.leftPad(numberAsString, NUM_CODE_MAX_LENGTH, NUM_CODE_PAD_SYMBOL);
     }

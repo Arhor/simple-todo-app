@@ -4,28 +4,28 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = ErrorCodeSerializer.class)
 public enum ErrorCode {
-    // @formatter:off
-    UNCATEGORIZED            (Type.GEN, 0),
+    UNCATEGORIZED            (Type.GEN, 0, "error.server.internal"),
 
-    VALIDATION_FAILED        (Type.VAL, 0),
+    VALIDATION_FAILED        (Type.VAL, 0, "error.entity.validation.failed"),
 
-    SECURITY_VIOLATION       (Type.SEC, 0),
+    UNAUTHORIZED             (Type.SEC, 0, "error.server.unauthorized"),
 
-    DATA_ACCESS_ERROR        (Type.DAT, 0),
-    NOT_FOUND                (Type.DAT, 1),
-    DUPLICATE                (Type.DAT, 2),
+    NOT_FOUND                (Type.DAT, 0, "error.entity.not.found"),
+    DUPLICATE                (Type.DAT, 1, "error.entity.duplicate"),
 
-    HANDLER_NOT_FOUND        (Type.SRV, 0),
-    METHOD_ARG_TYPE_MISMATCH (Type.SRV, 1),
-    // @formatter:on
+    HANDLER_NOT_FOUND        (Type.SRV, 0, "error.server.handler.not.found"),
+    METHOD_ARG_TYPE_MISMATCH (Type.SRV, 1, "error.value.type.mismatch"),
+
     ;
 
     private final Type type;
     private final int numericValue;
+    private final String label;
 
-    ErrorCode(final Type type, final int numericValue) {
+    ErrorCode(final Type type, final int numericValue, final String label) {
         this.type = type;
         this.numericValue = numericValue;
+        this.label = label;
     }
 
     public Type getType() {
@@ -36,14 +36,17 @@ public enum ErrorCode {
         return numericValue;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
     public enum Type {
-        // @formatter:off
         GEN("GENERAL"),
         SEC("SECURITY"),
         VAL("VALIDATION"),
         DAT("DATA"),
         SRV("SERVER"),
-        // @formatter:on
+
         ;
 
         private final String description;

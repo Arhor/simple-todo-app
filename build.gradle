@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath ("io.github.cdimascio:java-dotenv:${property('version.javaDotenv')}")
+        classpath "io.github.cdimascio:java-dotenv:${property('version.javaDotenv')}"
     }
 }
 
@@ -14,21 +14,15 @@ wrapper {
 }
 
 task stage {
-    dependsOn   ':todo-client:build'
-    finalizedBy ':todo-server:build'
+    dependsOn   ':app-client:build'
+    finalizedBy ':app-server:build'
 }
 
-def environmentVariables = new HashMap<String, String>(System.getenv())
+def environmentVariables = new HashMap<>(System.getenv())
 def dotenv = Dotenv.configure().directory("${rootDir}").ignoreIfMissing().load()
 
-dotenv.entries().forEach { (environmentVariables[it.key] = it.value) }
+dotenv.entries().forEach { environmentVariables[it.key] = it.value }
 
 ext {
-    env = { String name -> environmentVariables.get(name)
-        def variable = environmentVariables.get(name)
-        if (variable != null) {
-            return variable
-        }
-        throw new IllegalStateException("Missing Environment Variable: ${name}")
-    }
+    env = { name -> Objects.requireNonNull(environmentVariables.get(name), "Missing Environment Variable: $name") }
 }

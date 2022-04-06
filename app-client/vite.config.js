@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import dotenv from 'dotenv';
 
+dotenv.config({ path: '../.env' });
 
 export default defineConfig({
     plugins: [react()],
@@ -15,7 +17,7 @@ export default defineConfig({
     server: {
         proxy: {
             '^/api': {
-                target: 'http://localhost:5000',
+                target: process.env.API_BASE_URL,
                 changeOrigin: true,
             },
         },

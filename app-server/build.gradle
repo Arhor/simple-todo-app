@@ -65,7 +65,6 @@ dependencies {
     testImplementation "org.testcontainers:postgresql"
 }
 
-
 task copyLatestClientBuild(type: Copy) {
     def clientPrjDir = project(":app-client").projectDir.toString()
     def serverBldDir = project(":app-server").buildDir.toString()

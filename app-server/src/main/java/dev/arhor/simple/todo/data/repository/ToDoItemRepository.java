@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import dev.arhor.simple.todo.data.model.ToDoItem;
 
 @Repository
-public interface ToDoItemRepository extends PagingAndSortingRepository<ToDoItem, Long> {
+public interface ToDoItemRepository extends PagingAndSortingRepository<ToDoItem, Long>, WithInsert<ToDoItem> {
 
     List<ToDoItem> findAllByOwner(String owner);
 

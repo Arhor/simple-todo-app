@@ -1,10 +1,8 @@
 server:
   port: ${PORT:5000}
-
   error:
     whitelabel:
       enabled: false
-
   compression:
     enabled: true
     mime-types:
@@ -20,33 +18,27 @@ server:
 spring:
   application:
     name: simple-todo-app-server
-
   main:
     allow-bean-definition-overriding: true
-
   web:
     locale: en
-
   mvc:
     throw-exception-if-no-handler-found: true
-
+    static-path-pattern: /**
   aop:
     proxy-target-class: false
-
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   profiles:
     active: ${SPRING_ACTIVE_PROFILES:dev}
-
   jmx:
     enabled: false
-
   output:
     ansi:
       enabled: detect
-
   sql:
     init:
       platform: postgres
-
   datasource:
     driverClassName: org.postgresql.Driver
     url: ${JDBC_DATABASE_URL}
@@ -54,7 +46,6 @@ spring:
     password: ${JDBC_DATABASE_PASSWORD}
     hikari:
       auto-commit: false
-
   flyway:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
@@ -62,7 +53,6 @@ spring:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0.0
-
   security:
     oauth2:
       client:

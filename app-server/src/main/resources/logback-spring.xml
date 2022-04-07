@@ -16,8 +16,6 @@
                 </pattern>
             </encoder>
         </appender>
-
-        <logger name="org.arhor.diploma" level="DEBUG"/>
     </springProfile>
 
     <springProfile name="heroku">

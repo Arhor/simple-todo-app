@@ -22,9 +22,10 @@ spring:
     allow-bean-definition-overriding: true
   web:
     locale: en
+    resources:
+      add-mappings: false
   mvc:
     throw-exception-if-no-handler-found: true
-    static-path-pattern: /**
   aop:
     proxy-target-class: false
   autoconfigure:

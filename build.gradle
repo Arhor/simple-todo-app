@@ -1,28 +1,16 @@
-import io.github.cdimascio.dotenv.Dotenv
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "io.github.cdimascio:java-dotenv:${property('version.javaDotenv')}"
-    }
+ext {
+    env = Dotenv.configure().location("$rootDir").load()
 }
 
 wrapper {
     gradleVersion libs.versions.gradle.get()
 }
 
-task stage {
-    dependsOn   ':app-client:build'
-    finalizedBy ':app-server:build'
-}
+task stage() {
+    dependsOn ":app-client:build"
+    finalizedBy ":app-server:build"
 
-def environmentVariables = new HashMap<>(System.getenv())
-def dotenv = Dotenv.configure().directory("${rootDir}").ignoreIfMissing().load()
-
-dotenv.entries().forEach { environmentVariables[it.key] = it.value }
-
-ext {
-    env = { name -> Objects.requireNonNull(environmentVariables.get(name), "Missing Environment Variable: $name") }
+    doLast {
+        print "COMPLETE"
+    }
 }

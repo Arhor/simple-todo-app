@@ -2,11 +2,17 @@ package dev.arhor.simple.todo.web.error;
 
 import static dev.arhor.simple.todo.config.LocalizationConfig.ERROR_MESSAGES_BEAN;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Function;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import dev.arhor.simple.todo.exception.EntityDuplicateException;
@@ -93,19 +100,24 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ApiError handleNoHandlerFoundException(
+    public Object handleNoHandlerFoundException(
         final NoHandlerFoundException exception,
         final Locale locale,
-        final TimeZone timeZone
+        final TimeZone timeZone,
+        final URI requestURI
     ) {
         logExceptionWithRequestId(exception);
-        return handleErrorCode(
-            ErrorCode.HANDLER_NOT_FOUND,
-            locale,
-            timeZone,
-            exception.getHttpMethod(),
-            exception.getRequestURL()
-        );
+        if (requestURI.toString().startsWith("/api/")) {
+            return handleErrorCode(
+                ErrorCode.HANDLER_NOT_FOUND,
+                locale,
+                timeZone,
+                exception.getHttpMethod(),
+                exception.getRequestURL()
+            );
+        } else {
+            return new ModelAndView("forward:/");
+        }
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

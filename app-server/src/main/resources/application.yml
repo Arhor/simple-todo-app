@@ -61,3 +61,12 @@ spring:
           github:
             clientId: ${GITHUB_CLIENT_ID}
             clientSecret: ${GITHUB_CLIENT_SECRET}
+
+configuration:
+  resources:
+    patterns:
+      - /index.html
+      - /assets/**
+    locations:
+      - classpath:/static/
+      - classpath:/static/assets/

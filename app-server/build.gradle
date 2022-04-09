@@ -39,6 +39,7 @@ configurations {
 dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:${libs.versions.mapstruct.get()}"
     annotationProcessor "org.springframework:spring-context-indexer"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     compileOnly "org.mapstruct:mapstruct:${libs.versions.mapstruct.get()}"
 

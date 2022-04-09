@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 
 import dev.arhor.simple.todo.infrastructure.startup.StartupTask;
 
 @SpringBootApplication(proxyBeanMethods = false)
+@ConfigurationPropertiesScan("dev.arhor.simple.todo.config.properties")
 public class ToDoAppRunner {
 
     public static void main(String[] args) {

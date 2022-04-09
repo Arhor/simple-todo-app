@@ -1,20 +1,15 @@
 package dev.arhor.simple.todo.config;
 
-import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -23,18 +18,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import dev.arhor.simple.todo.config.properties.ResourcesConfigurationProperties;
+import dev.arhor.simple.todo.config.resolver.RequestURIMethodArgumentResolver;
+import lombok.RequiredArgsConstructor;
+
 @Configuration(proxyBeanMethods = false)
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class WebServerConfig implements WebMvcConfigurer {
 
-    private static final String[] RESOURCE_PATH_PATTERNS = {
-        "/index.html",
-        "/assets/**"
-    };
-
-    private static final String[] RESOURCE_CLASSPATH_LOCATIONS = {
-        "classpath:/static/",
-        "classpath:/static/assets/",
-    };
+    private final ResourcesConfigurationProperties resources;
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
@@ -48,25 +40,12 @@ public class WebServerConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(RESOURCE_PATH_PATTERNS).addResourceLocations(RESOURCE_CLASSPATH_LOCATIONS);
+        registry.addResourceHandler(resources.patterns()).addResourceLocations(resources.locations());
     }
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new HandlerMethodArgumentResolver() {
-            @Override
-            public boolean supportsParameter(final MethodParameter parameter) {
-                return URI.class.equals(parameter.getParameterType());
-            }
-
-            @Override
-            public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer, final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) throws Exception {
-                return URI.create(
-                    webRequest.getNativeRequest(HttpServletRequest.class)
-                              .getRequestURI()
-                );
-            }
-        });
+        resolvers.add(new RequestURIMethodArgumentResolver());
     }
 
     @Override

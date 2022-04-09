@@ -29,7 +29,11 @@ public class AsyncConfig implements AsyncConfigurer {
     @Override
     public Executor getAsyncExecutor() {
         return new DelegatingSecurityContextAsyncTaskExecutor(
-            new ContextAwareThreadPoolTaskExecutor()
+            new ContextAwareThreadPoolTaskExecutor() {
+                {
+                    initialize();
+                }
+            }
         );
     }
 

@@ -1,6 +1,6 @@
 {
     "info": {
-        "name": "TODO App API",
+        "name": "ToDo App API",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
@@ -11,13 +11,13 @@
     ],
     "item": [
         {
-            "name": "Tags",
+            "name": "ToDo items",
             "item": [
                 {
-                    "name": "Get all tags",
+                    "name": "Get all ToDo items for the current user",
                     "request": {
                         "method": "GET",
-                        "url": "{{apiBaseUrl}}/tags"
+                        "url": "{{apiBaseUrl}}/todos"
                     }
                 }
             ]

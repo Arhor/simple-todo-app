@@ -1,18 +1,20 @@
 package dev.arhor.simple.todo.infrastructure.aspect;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Arrays;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import dev.arhor.simple.todo.infrastructure.context.CurrentRequestContext;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -20,30 +22,53 @@ public class MethodExecutionLoggingAspect {
 
     private final CurrentRequestContext currentRequestContext;
 
-    @Pointcut("execution(* dev.arhor.simple.todo.web.controller..*(..))")
-    private void webLayer() { /* no-op */ }
+    @Around("webLayer() || serviceLayer() || persistenceLayer()")
+    public Object intercept(final ProceedingJoinPoint joinPoint) throws Throwable {
+        var log = componentLogger(joinPoint);
 
-    @Pointcut("execution(* dev.arhor.simple.todo.service..*(..))")
-    private void serviceLayer() { /* no-op */ }
-
-    @Pointcut("execution(* dev.arhor.simple.todo.data..*(..))")
-    private void persistenceLayer() { /* no-op */ }
-
-    @Before(value = "webLayer() || serviceLayer() || persistenceLayer()")
-    public void intercept(final JoinPoint joinPoint) {
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             var requestId = currentRequestContext.getRequestId();
-            var signature = stringifyMethodExecutionSignature(joinPoint);
+            var signature = joinPoint.getSignature();
+            var methodFullSignature = signature.getDeclaringType().getSimpleName() + "." + signature.getName() + "()";
 
-            log.info("Request-ID: {}, Method: {}", requestId, signature);
+            log.debug(
+                "Request-ID: {}, Method: {}, Arguments: {}",
+                requestId,
+                methodFullSignature,
+                Arrays.toString(joinPoint.getArgs())
+            );
+            Object result = joinPoint.proceed();
+            log.debug(
+                "Request-ID: {}, Method: {}, Result: {}",
+                requestId,
+                methodFullSignature,
+                result
+            );
+            return result;
+        } else {
+            return joinPoint.proceed();
         }
     }
 
-    private String stringifyMethodExecutionSignature(final JoinPoint joinPoint) {
-        var className = joinPoint.getSourceLocation().getWithinType().getCanonicalName();
-        var methodName = joinPoint.getSignature().getName();
-        var methodArgs = StringUtils.joinWith(",", joinPoint.getArgs());
+    @Pointcut(
+        value = "execution(* dev.arhor.simple.todo.web.controller..*(..))" +
+            " && within(@org.springframework.web.bind.annotation.RestController *)"
+    )
+    private void webLayer() { /* no-op */ }
 
-        return className + "." + methodName + "(" + methodArgs + ")";
+    @Pointcut(
+        value = "execution(* dev.arhor.simple.todo.service..*(..))" +
+            " && within(@org.springframework.stereotype.Service *)"
+    )
+    private void serviceLayer() { /* no-op */ }
+
+    @Pointcut(
+        value = "execution(* dev.arhor.simple.todo.data..*(..))" +
+            " && within(@org.springframework.stereotype.Repository *)"
+    )
+    private void persistenceLayer() { /* no-op */ }
+
+    private Logger componentLogger(final JoinPoint joinPoint) {
+        return LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
     }
 }

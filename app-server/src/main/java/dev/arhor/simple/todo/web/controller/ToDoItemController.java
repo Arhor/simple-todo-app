@@ -48,9 +48,9 @@ public class ToDoItemController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public void deleteToDoItem(@PathVariable final Long id, final Authentication auth) {
-        var owner = ownerResolver.resolveOwnerId(auth);
-        service.deleteToDoItemById(id, owner);
+//    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    public void deleteToDoItem(@PathVariable final Long id/*, final Authentication auth*/) {
+//        var owner = ownerResolver.resolveOwnerId(auth);
+        service.deleteToDoItemById(id, "owner");
     }
 }

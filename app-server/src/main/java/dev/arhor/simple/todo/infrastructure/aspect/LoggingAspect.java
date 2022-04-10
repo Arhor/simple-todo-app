@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -18,36 +19,41 @@ import lombok.RequiredArgsConstructor;
 @Aspect
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class MethodExecutionLoggingAspect {
+public class LoggingAspect {
 
     private final CurrentRequestContext currentRequestContext;
 
     @Around("webLayer() || serviceLayer() || persistenceLayer()")
-    public Object intercept(final ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object logMethodExecution(final ProceedingJoinPoint joinPoint) throws Throwable {
         var log = componentLogger(joinPoint);
-
         if (log.isDebugEnabled()) {
             var requestId = currentRequestContext.getRequestId();
             var signature = joinPoint.getSignature();
-            var methodFullSignature = signature.getDeclaringType().getSimpleName() + "." + signature.getName() + "()";
-
+            var signatureName = signature.getDeclaringType().getSimpleName() + "." + signature.getName() + "()";
             log.debug(
                 "Request-ID: {}, Method: {}, Arguments: {}",
                 requestId,
-                methodFullSignature,
+                signatureName,
                 Arrays.toString(joinPoint.getArgs())
             );
             Object result = joinPoint.proceed();
             log.debug(
                 "Request-ID: {}, Method: {}, Result: {}",
                 requestId,
-                methodFullSignature,
+                signatureName,
                 result
             );
             return result;
         } else {
             return joinPoint.proceed();
         }
+    }
+
+    @AfterThrowing(pointcut = "webLayer() || serviceLayer() || persistenceLayer()", throwing = "exception")
+    public void logException(final JoinPoint joinPoint, final Throwable exception) {
+        // TODO: try not log the same exception twice
+        componentLogger(joinPoint)
+            .error("Request-ID: {}", currentRequestContext.getRequestId(), exception);
     }
 
     @Pointcut(

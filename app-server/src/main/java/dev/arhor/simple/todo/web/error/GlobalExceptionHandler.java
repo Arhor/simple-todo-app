@@ -2,17 +2,12 @@ package dev.arhor.simple.todo.web.error;
 
 import static dev.arhor.simple.todo.config.LocalizationConfig.ERROR_MESSAGES_BEAN;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Function;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +49,7 @@ public class GlobalExceptionHandler {
         final Locale locale,
         final TimeZone timeZone
     ) {
-        logExceptionWithRequestId(exception, "Unhandled exception. Consider appropriate exception handler");
+        log.error("Unhandled exception. Consider appropriate exception handler", exception);
         return handleErrorCode(ErrorCode.UNCATEGORIZED, locale, timeZone);
     }
 
@@ -65,7 +60,6 @@ public class GlobalExceptionHandler {
         final Locale locale,
         final TimeZone timeZone
     ) {
-        logExceptionWithRequestId(exception);
         return handleErrorCode(ErrorCode.NOT_FOUND, locale, timeZone, exception.getParams());
     }
 
@@ -76,7 +70,6 @@ public class GlobalExceptionHandler {
         final Locale locale,
         final TimeZone timeZone
     ) {
-        logExceptionWithRequestId(exception);
         return handleErrorCode(ErrorCode.DUPLICATE, locale, timeZone, exception.getParams());
     }
 
@@ -87,7 +80,6 @@ public class GlobalExceptionHandler {
         final Locale locale,
         final TimeZone timeZone
     ) {
-        logExceptionWithRequestId(exception);
         return handleErrorCode(
             ErrorCode.METHOD_ARG_TYPE_MISMATCH,
             locale,
@@ -106,7 +98,6 @@ public class GlobalExceptionHandler {
         final TimeZone timeZone,
         final URI requestURI
     ) {
-        logExceptionWithRequestId(exception);
         if (requestURI.toString().startsWith("/api/")) {
             return handleErrorCode(
                 ErrorCode.HANDLER_NOT_FOUND,
@@ -122,12 +113,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AccessDeniedException.class)
-    public ApiError handleAccessDeniedException(
-        final AccessDeniedException exception,
-        final Locale locale,
-        final TimeZone timeZone
-    ) {
-        logExceptionWithRequestId(exception);
+    public ApiError handleAccessDeniedException(final Locale locale, final TimeZone timeZone) {
         return handleErrorCode(ErrorCode.UNAUTHORIZED, locale, timeZone);
     }
 
@@ -138,8 +124,6 @@ public class GlobalExceptionHandler {
         final Locale locale,
         final TimeZone timeZone
     ) {
-        logExceptionWithRequestId(exception);
-
         var bindingResult = exception.getBindingResult();
 
         var errors = ListUtils.union(
@@ -156,14 +140,6 @@ public class GlobalExceptionHandler {
         );
 
         return handleErrorCode(ErrorCode.VALIDATION_FAILED, locale, timeZone, errors);
-    }
-
-    private void logExceptionWithRequestId(final Exception exception) {
-        log.error("Request-ID: {}", currentRequestContext.getRequestId(), exception);
-    }
-
-    private void logExceptionWithRequestId(final Exception exception, final String message) {
-        log.error("{}, Request-ID: {}", message, currentRequestContext.getRequestId(), exception);
     }
 
     private ApiError handleErrorCode(

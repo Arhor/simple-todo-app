@@ -51,9 +51,15 @@ public class LoggingAspect {
 
     @AfterThrowing(pointcut = "webLayer() || serviceLayer() || persistenceLayer()", throwing = "exception")
     public void logException(final JoinPoint joinPoint, final Throwable exception) {
-        // TODO: try not log the same exception twice
-        componentLogger(joinPoint)
-            .error("Request-ID: {}", currentRequestContext.getRequestId(), exception);
+        if (!currentRequestContext.isExceptionLogged(exception)) {
+            componentLogger(joinPoint)
+                .error(
+                    "Request-ID: {}",
+                    currentRequestContext.getRequestId(),
+                    exception
+                );
+            currentRequestContext.setExceptionBeenLogged(exception);
+        }
     }
 
     @Pointcut(

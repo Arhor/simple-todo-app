@@ -6,6 +6,7 @@ import java.util.concurrent.Future;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -15,9 +16,15 @@ import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecu
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import dev.arhor.simple.todo.infrastructure.context.CurrentRequestContext;
+import lombok.RequiredArgsConstructor;
+
 @EnableAsync
 @Configuration(proxyBeanMethods = false)
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class AsyncConfig implements AsyncConfigurer {
+
+    private final CurrentRequestContext currentRequestContext;
 
     @Bean
     @Override
@@ -37,7 +44,7 @@ public class AsyncConfig implements AsyncConfigurer {
         );
     }
 
-    private static class ContextAwareThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
+    private class ContextAwareThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
 
         @Override
         public <T> Future<T> submit(final Callable<T> task) {
@@ -71,24 +78,30 @@ public class AsyncConfig implements AsyncConfigurer {
 
         private <T> Callable<T> contextAwareCallable(final Callable<T> task) {
             var parentThreadRequestAttributes = RequestContextHolder.currentRequestAttributes();
+            var parentThreadRequestId = currentRequestContext.getRequestId();
             return () -> {
                 try {
                     RequestContextHolder.setRequestAttributes(parentThreadRequestAttributes);
+                    currentRequestContext.setRequestId(parentThreadRequestId);
                     return task.call();
                 } finally {
                     RequestContextHolder.resetRequestAttributes();
+                    currentRequestContext.setRequestId(null);
                 }
             };
         }
 
         private Runnable contextAwareRunnable(final Runnable task) {
             var parentThreadRequestAttributes = RequestContextHolder.currentRequestAttributes();
+            var parentThreadRequestId = currentRequestContext.getRequestId();
             return () -> {
                 try {
                     RequestContextHolder.setRequestAttributes(parentThreadRequestAttributes);
+                    currentRequestContext.setRequestId(parentThreadRequestId);
                     task.run();
                 } finally {
                     RequestContextHolder.resetRequestAttributes();
+                    currentRequestContext.setRequestId(null);
                 }
             };
         }

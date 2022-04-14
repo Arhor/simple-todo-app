@@ -14,12 +14,17 @@ task stage(type: Jar, dependsOn: [":app-client:build", ":app-server:build"]) {
     group = "build"
     description = "Created composite Jar file including client and server part"
 
-    from(zipTree("${project(":app-server").buildDir}/libs/app-server.jar"))
-    from("${project(":app-client").projectDir}/dist") {
-        into("BOOT-INF/classes/static")
-    }
+    entryCompression = ZipEntryCompression.STORED
 
-    doLast {
-        print "COMPLETE"
+    def serverBuild = zipTree("${project(":app-server").buildDir}/libs/app-server.jar")
+    def clientBuild = "${project(":app-client").projectDir}/dist"
+
+    from(serverBuild) { into "/" }
+    from(clientBuild) { into "/BOOT-INF/classes/static" }
+
+    manifest {
+        from {
+            serverBuild.find { it.name == 'MANIFEST.MF' }
+        }
     }
 }

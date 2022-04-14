@@ -8,6 +8,7 @@ public final class DotenvConfigurer {
             false,
             true,
             true,
+            false,
             Paths.get(".").toAbsolutePath().normalize().toString(),
             ".env"
         );
@@ -16,6 +17,8 @@ public final class DotenvConfigurer {
     private final boolean strictMode;
     private final boolean includeSystemVariables;
     private final boolean allowOverrideSystemVariables;
+
+    private final boolean allowMissingFile;
     private final String location;
     private final String filename;
 
@@ -23,6 +26,7 @@ public final class DotenvConfigurer {
         final boolean strictMode,
         final boolean includeSystemVariables,
         final boolean allowOverrideSystemVariables,
+        final boolean allowMissingFile,
         final String location,
         final String filename
     ) {
@@ -32,6 +36,7 @@ public final class DotenvConfigurer {
         this.strictMode = strictMode;
         this.includeSystemVariables = includeSystemVariables;
         this.allowOverrideSystemVariables = allowOverrideSystemVariables;
+        this.allowMissingFile = allowMissingFile;
         this.location = location;
         this.filename = filename;
     }
@@ -43,7 +48,7 @@ public final class DotenvConfigurer {
     public Dotenv load() {
         try {
             final var systemEnvironment = System.getenv();
-            final var fileContent = DotenvFileLoader.readDotenvFileAsProperties(location, filename);
+            final var fileContent = DotenvFileLoader.readDotenvFileAsProperties(location, filename, allowMissingFile);
 
             return new DotenvImpl(this, systemEnvironment, fileContent);
         } catch (final Exception e) {
@@ -56,6 +61,7 @@ public final class DotenvConfigurer {
             strictMode,
             includeSystemVariables,
             allowOverrideSystemVariables,
+            allowMissingFile,
             location,
             filename
         );
@@ -66,6 +72,7 @@ public final class DotenvConfigurer {
             strictMode,
             includeSystemVariables,
             allowOverrideSystemVariables,
+            allowMissingFile,
             location,
             filename
         );
@@ -77,6 +84,18 @@ public final class DotenvConfigurer {
             strictMode,
             includeSystemVariables,
             allowOverrideSystemVariables,
+            allowMissingFile,
+            location,
+            filename
+        );
+    }
+
+    public DotenvConfigurer allowMissingFile(final boolean allowMissingFile) {
+        return new DotenvConfigurer(
+            strictMode,
+            includeSystemVariables,
+            allowOverrideSystemVariables,
+            allowMissingFile,
             location,
             filename
         );
@@ -88,6 +107,7 @@ public final class DotenvConfigurer {
             strictMode,
             includeSystemVariables,
             allowOverrideSystemVariables,
+            allowMissingFile,
             location,
             filename
         );
@@ -98,6 +118,7 @@ public final class DotenvConfigurer {
             strictMode,
             includeSystemVariables,
             allowOverrideSystemVariables,
+            allowMissingFile,
             location,
             filename
         );
@@ -113,6 +134,10 @@ public final class DotenvConfigurer {
 
     public boolean isAllowOverrideSystemVariables() {
         return allowOverrideSystemVariables;
+    }
+
+    public boolean isAllowMissingFile() {
+        return allowMissingFile;
     }
 
     public String getLocation() {

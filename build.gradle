@@ -1,5 +1,5 @@
 ext {
-    env = Dotenv.configure().location("$rootDir").load()
+    env = Dotenv.configure().location("$rootDir").allowMissingFile(true).load()
 }
 
 wrapper {

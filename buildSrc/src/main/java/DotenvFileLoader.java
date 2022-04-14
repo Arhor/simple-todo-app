@@ -1,3 +1,4 @@
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +14,10 @@ final class DotenvFileLoader {
 
     static Properties readDotenvFileAsProperties(
         final String location,
-        final String filename
+        final String filename,
+        final boolean allowMissingFile
     ) throws IOException {
-        try (final var dotenvFileInputStream = getDotenvFileInputStream(location, filename)) {
+        try (final var dotenvFileInputStream = getDotenvFileInputStream(location, filename, allowMissingFile)) {
             return readDotenvFileAsProperties(dotenvFileInputStream);
         }
     }
@@ -26,8 +28,11 @@ final class DotenvFileLoader {
         return properties;
     }
 
-    private static InputStream getDotenvFileInputStream(final String location, final String filename)
-        throws IOException {
+    private static InputStream getDotenvFileInputStream(
+        final String location,
+        final String filename,
+        final boolean allowMissingFile
+    ) throws IOException {
 
         final var fileLocation = getDotenvFileLocation(location, filename);
         final var path = getDotenvFilePath(fileLocation);
@@ -35,11 +40,14 @@ final class DotenvFileLoader {
         if (Files.exists(path)) {
             return Files.newInputStream(path);
         } else {
-            return getDotenvFileInputStreamFromClasspath(fileLocation);
+            return getDotenvFileInputStreamFromClasspath(fileLocation, allowMissingFile);
         }
     }
 
-    private static InputStream getDotenvFileInputStreamFromClasspath(final String fileLocation) {
+    private static InputStream getDotenvFileInputStreamFromClasspath(
+        final String fileLocation,
+        final boolean allowMissingFile
+    ) {
         final var currentClass = DotenvFileLoader.class;
 
         var inputStream = currentClass.getResourceAsStream(fileLocation);
@@ -50,7 +58,11 @@ final class DotenvFileLoader {
             inputStream = ClassLoader.getSystemResourceAsStream(fileLocation);
         }
         if (inputStream == null) {
-            throw new RuntimeException("Could not find " + fileLocation + " on the classpath");
+            if (allowMissingFile) {
+                inputStream = ByteArrayInputStream.nullInputStream();
+            } else {
+                throw new RuntimeException("Could not find " + fileLocation + " on the classpath");
+            }
         }
         return inputStream;
     }

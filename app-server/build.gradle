@@ -75,9 +75,9 @@ task copyLatestClientBuild(type: Copy) {
 }
 
 flyway {
-    url = env.getRequired("JDBC_DATABASE_URL")
-    user = env.getRequired("JDBC_DATABASE_USERNAME")
-    password = env.getRequired("JDBC_DATABASE_PASSWORD")
+    url = env.get("JDBC_DATABASE_URL")
+    user = env.get("JDBC_DATABASE_USERNAME")
+    password = env.get("JDBC_DATABASE_PASSWORD")
 
     driver = "org.postgresql.Driver"
     encoding = "UTF-8"

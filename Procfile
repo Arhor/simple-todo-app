@@ -1,1 +1,1 @@
-web: java --enable-preview -jar todo-server/build/libs/todo-server.jar
+web: java --enable-preview -jar build/libs/simple-todo-app.jar

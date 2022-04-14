@@ -1,3 +1,7 @@
+plugins {
+    id 'base'
+}
+
 ext {
     env = Dotenv.configure().location("$rootDir").allowMissingFile(true).load()
 }
@@ -6,9 +10,14 @@ wrapper {
     gradleVersion libs.versions.gradle.get()
 }
 
-task stage() {
-    dependsOn ":app-client:build"
-    finalizedBy ":app-server:build"
+task stage(type: Jar, dependsOn: [":app-client:build", ":app-server:build"]) {
+    group = "build"
+    description = "Created composite Jar file including client and server part"
+
+    from(zipTree("${project(":app-server").buildDir}/libs/app-server.jar"))
+    from("${project(":app-client").projectDir}/dist") {
+        into("BOOT-INF/classes/static")
+    }
 
     doLast {
         print "COMPLETE"

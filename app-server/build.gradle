@@ -1,5 +1,3 @@
-import java.nio.file.Paths
-
 plugins {
     id "org.flywaydb.flyway"
     id "org.springframework.boot"
@@ -66,14 +64,6 @@ dependencies {
     testImplementation "org.testcontainers:postgresql"
 }
 
-task copyLatestClientBuild(type: Copy) {
-    def clientPrjDir = project(":app-client").projectDir.toString()
-    def serverBldDir = project(":app-server").buildDir.toString()
-
-    from(Paths.get(clientPrjDir, "dist"))
-    into(Paths.get(serverBldDir, "resources", "main", "static"))
-}
-
 flyway {
     url = env.get("JDBC_DATABASE_URL")
     user = env.get("JDBC_DATABASE_USERNAME")
@@ -84,10 +74,6 @@ flyway {
     locations = ["classpath:db/migration"]
     baselineVersion = "0.0"
     baselineOnMigrate = true
-}
-
-processResources {
-    dependsOn copyLatestClientBuild
 }
 
 test {
